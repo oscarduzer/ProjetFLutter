@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 
+import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 class Transcription {
   final String image;
   final String text;
@@ -49,35 +50,58 @@ class _TranscriptionListState extends State<TranscriptionList> {
               height: 50,
               fit: BoxFit.cover,
             ),
-            title: Text(transcriptions[index].text),
-            trailing: IconButton(
-              icon: Icon(Icons.share),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      content: SingleChildScrollView(
-                        child: ListBody(
-                          children: <Widget>[
-                            Image.network(
-                              transcriptions[index].image,
-                              width: 300,
-                              height: 300,
-                              fit: BoxFit.cover,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 10),
-                              child: Text(transcriptions[index].text),
-                            ),
-                          ],
-                        ),
+            title: Text(transcriptions[index].text.toString().substring(0,5)+"...",
+            style: TextStyle(
+            color: Color(0xE8AA79F3),
+            fontWeight: FontWeight.normal,
+            fontFamily: 'PirataOne-Regular'
+            )),
+              trailing: Container(
+                  width: 100, // specify your desired width
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.more),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                content: SingleChildScrollView(
+                                  child: ListBody(
+                                    children: <Widget>[
+                                      Image.network(
+                                        transcriptions[index].image,
+                                        width: 300,
+                                        height: 300,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 10),
+                                        child: Text(transcriptions[index].text,
+                                          style: TextStyle(
+                                              color: Color(0xE8463957),
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'PirataOne-Regular'
+                                          ),),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
                       ),
-                    );
-                  },
-                );
-              },
-            ),
+                      IconButton(
+                          onPressed: (){
+
+                          },
+                          icon: Icon(Icons.share))
+                    ],
+                  )
+              )
+
           );
         }
     );
