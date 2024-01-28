@@ -3,7 +3,7 @@ import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:picturetranscriptor/transcription.dart';
 import 'package:camera/camera.dart';
-
+import 'TranscriptionVew.dart';
 late List<CameraDescription> _cameras;
 
 void main() async{
@@ -23,18 +23,29 @@ class MyApp extends StatelessWidget {
 }
 
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final ImagePicker _picker = ImagePicker();
-  final textDetector =TextRecognizer(script: TextRecognitionScript.latin);
+  final textDetector =TextRecognizer();
   Future<void> _getImageFromGallery() async {
     try {
       XFile? imageFile = await _picker.pickImage(source: ImageSource.gallery);
       if (imageFile != null) {
         final inputImage = InputImage.fromFilePath(imageFile.path);
-        final recognisedText = await textDetector.processImage(inputImage);
-        final text = recognisedText.text;
-        Transcription transcription=new Transcription(imageFile.path, text);
-        TranscriptionList.savetranscription(transcription);
+        /*TextRecognizer textRecognizer = TextRecognizer();
+        RecognizedText recognizedText = await textRecognizer.processImage(inputImage);*/
+        //TranscriptionList.transcriptions.add(new Transcription(imageFile.path, recognizedText.text));
+        // Vous pouvez naviguer vers la vue de transcription ici
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => TranscritionView(picture: imageFile)),
+        );
       }
     } catch (e) {
       print('Une erreur est survenue lors de la récupération de l\'image : $e');
@@ -46,7 +57,9 @@ class HomePage extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: Container(), // Remplacez par votre widget
+        body: Container(
+          child: TranscriptionList(),
+        ), // Remplacez par votre widget
         floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
@@ -74,6 +87,7 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
 
 
 class CameraScreen extends StatefulWidget {
@@ -129,15 +143,15 @@ class _CameraScreenState extends State<CameraScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (controller == null || !controller!.value.isInitialized) {
+    if (!controller!.value.isInitialized) {
       return Container();
     }
     return AspectRatio(
-      aspectRatio: controller!.value.aspectRatio,
+      aspectRatio: controller.value.aspectRatio,
       child: Stack(
         fit: StackFit.expand,
         children: <Widget>[
-          CameraPreview(controller!),
+          CameraPreview(controller),
           Positioned(
             bottom: 10,
             right: 10,

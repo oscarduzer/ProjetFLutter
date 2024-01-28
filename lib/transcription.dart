@@ -1,64 +1,4 @@
-import 'dart:io';
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:google_ml_kit/google_ml_kit.dart';
-import 'package:picturetranscriptor/main.dart';
-
-
-class TranscritionView extends StatefulWidget {
-  TranscritionView({required this.picture, Key? key}) : super(key: key);
-  XFile picture;
-  @override
-  State<TranscritionView> createState() => _TranscritionViewState();
-}
-
-class _TranscritionViewState extends State<TranscritionView> {
-  late File imageFile;
-  late InputImage inputImage;
-
-  @override
-  void initState(){
-    super.initState();
-    load();
-  }
- void load() async{
-   imageFile = File(widget.picture.path);
-   TextRecognizer textRecognizer = TextRecognizer();
-   inputImage = InputImage.fromFilePath(widget.picture.path);
-   RecognizedText recognisedText = await textRecognizer.processImage(inputImage);
-   Transcription transcription=new Transcription(imageFile.path, recognisedText.text);
-   TranscriptionList.setState(transcription);
-   print(TranscriptionList._transcriptions);
- }
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            Container(
-                child: Image.network(imageFile.path)
-            ),
-            Container(
-              child: Text(''),
-            )
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (builder)=>MyApp()));
-          },
-        child: Icon(Icons.home),
-      ),
-    );
-  }
-}
-
-
-
-
-
 
 class Transcription {
   final String image;
@@ -68,33 +8,79 @@ class Transcription {
 }
 
 
-class TranscriptionList extends StatelessWidget {
-  static List<Transcription> _transcriptions=[];
+class TranscriptionList extends StatefulWidget {
+  const TranscriptionList({super.key});
 
-  static setState(Transcription transcription)
-  {
-    savetranscription(transcription);
-  }
-  static void savetranscription(Transcription transcription)
-  {
-    _transcriptions.add(transcription);
-  }
+  static List<Transcription> transcriptions=[];
+  State<TranscriptionList> createState() => _TranscriptionListState();
+}
+
+class _TranscriptionListState extends State<TranscriptionList> {
+  get transcriptions => TranscriptionList.transcriptions;
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: _transcriptions.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          leading: Image.network(_transcriptions[index].image),
-          title: Text(_transcriptions[index].text),
-          trailing: IconButton(
-            icon: Icon(Icons.share),
-            onPressed: () {
-              // Ajoutez votre code pour partager le texte ici
-            },
-          ),
+    if(transcriptions.length==0)
+      {
+        return Center(
+          child: Text("Aucune Transcription Pour le moment"),
         );
+      }
+    return ListView.builder(
+      itemCount: transcriptions.length + 1, // Ajoutez 1 pour l'en-tête
+      itemBuilder: (context, index) {
+        if (index == 0) {
+          // C'est l'en-tête
+          return Container(
+            padding: EdgeInsets.all(10),
+            color: Colors.grey[200],
+            child: Text(
+              'En-tête',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          );
+        } else {
+          index = index - 1; // Réduisez l'index de 1 pour les éléments de la liste
+          return ListTile(
+            leading: Image.network(
+              transcriptions[index].image,
+              width: 50,
+              height: 50,
+              fit: BoxFit.cover,
+            ),
+            title: Text(transcriptions[index].text),
+            trailing: IconButton(
+              icon: Icon(Icons.share),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      content: SingleChildScrollView(
+                        child: ListBody(
+                          children: <Widget>[
+                            Image.network(
+                              transcriptions[index].image,
+                              width: 300,
+                              height: 300,
+                              fit: BoxFit.cover,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 10),
+                              child: Text(transcriptions[index].text),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          );
+        }
       },
     );
+
   }
 }
+
