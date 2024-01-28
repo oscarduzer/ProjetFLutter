@@ -61,7 +61,7 @@ class _TranscriptionListState extends State<TranscriptionList> {
                   child: Row(
                     children: [
                       IconButton(
-                        icon: Icon(Icons.more),
+                        icon: Icon(Icons.more,color: Color(0xE8AA79F3)),
                         onPressed: () {
                           showDialog(
                             context: context,
@@ -95,9 +95,9 @@ class _TranscriptionListState extends State<TranscriptionList> {
                       ),
                       IconButton(
                           onPressed: (){
-
+                            Share.shareFiles([transcriptions[index].image], text:transcriptions[index].text);
                           },
-                          icon: Icon(Icons.share))
+                          icon: Icon(Icons.share,color: Color(0xE8AA79F3)))
                     ],
                   )
               )
