@@ -17,7 +17,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text("Historique De Transcription",style: TextStyle(color: Color(0xE8AA79F3)),),
+          backgroundColor: Colors.white,
+        ),
+        body: HomePage(),
+      ),
     );
   }
 }
