@@ -1,56 +1,113 @@
+
 import 'dart:io';
 
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:google_ml_kit/google_ml_kit.dart';
-import 'transcription.dart';
-import 'main.dart';
-import 'dart:io';
+import 'package:share_plus/share_plus.dart';
+class Transcription {
+  final String image;
+  final String text;
 
-class TranscritionView extends StatefulWidget {
-  TranscritionView({required this.picture, Key? key}) : super(key: key);
-  XFile picture;
-  @override
-  State<TranscritionView> createState() => _TranscritionViewState();
+  Transcription(this.image, this.text);
 }
 
-class _TranscritionViewState extends State<TranscritionView> {
-  late String _text='';
-  @override
-  void initState(){
-    super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) => load());
-  }
-  void load() async{
-    File imageFile = File(widget.picture.path);
-    TextRecognizer textRecognizer = TextRecognizer();
-    InputImage inputImage = InputImage.fromFilePath(widget.picture.path);
-    RecognizedText recognizedText = await textRecognizer.processImage(inputImage);
-    Transcription transcription=new Transcription(imageFile.path, recognizedText.text);
-    TranscriptionList.transcriptions.add(transcription);
-    print(TranscriptionList.transcriptions);
-  }
+
+class TranscriptionList extends StatefulWidget {
+  const TranscriptionList({super.key});
+
+  static List<Transcription> transcriptions=[];
+  State<TranscriptionList> createState() => _TranscriptionListState();
+}
+
+class _TranscriptionListState extends State<TranscriptionList> {
+  get transcriptions => TranscriptionList.transcriptions;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            Container(
-                child: Image.file(File(widget.picture.path))
+    if(transcriptions.length==0)
+      {
+        return Center(
+          child: Container(
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image(image: AssetImage("empty.gif")
+                    ,repeat: ImageRepeat.noRepeat,
+                    filterQuality: FilterQuality.high),
+                Text("Pas de Transcription Trouvée pour le moment,Capturer ou Importer une photo.",
+                textAlign: TextAlign.center,
+                  style: TextStyle(color: Color(0xE8AA79F3),
+                  fontWeight: FontWeight.bold,fontFamily: "PirataOne-Regular"),)
+              ],
             ),
-            Container(
-              child: Text(_text),
-            )
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (builder)=>HomePage()));
-        },
-        child: Icon(Icons.home),
-      ),
+          ),
+        );
+      }
+    return ListView.builder(
+      itemCount: transcriptions.length,
+      itemBuilder: (context, index) {
+          return ListTile(
+            leading: Image.file(
+              transcriptions[index].image as File,
+              width: 50,
+              height: 50,
+              fit: BoxFit.cover,
+            ),
+            title: Text(transcriptions[index].text.toString().substring(0,5)+"...",
+            style: TextStyle(
+            color: Color(0xE8AA79F3),
+            fontWeight: FontWeight.normal,
+            fontFamily: 'PirataOne-Regular'
+            )),
+              trailing: Container(
+                  width: 100, // specify your desired width
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.more,color: Color(0xE8AA79F3)),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                content: SingleChildScrollView(
+                                  child: ListBody(
+                                    children: <Widget>[
+                                      Image.file(
+                                        transcriptions[index].image as File,
+                                        width: 300,
+                                        height: 300,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 10),
+                                        child: Text(transcriptions[index].text,
+                                          style: TextStyle(
+                                              color: Color(0xE8463957),
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'PirataOne-Regular'
+                                          ),),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      IconButton(
+                          onPressed: (){
+                            Share.shareFiles([transcriptions[index].image], text:transcriptions[index].text);
+                          },
+                          icon: Icon(Icons.share,color: Color(0xE8AA79F3)))
+                    ],
+                  )
+              )
+
+          );
+        }
     );
+
   }
 }
+

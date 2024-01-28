@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'SplashScreen.dart';
-import 'transcription.dart';
-import 'package:camera/camera.dart';
 import 'TranscriptionView.dart';
+import 'package:camera/camera.dart';
+import 'Transcription.dart';
 late List<CameraDescription> _cameras;
 
 void main() async{
