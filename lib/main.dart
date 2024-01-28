@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:picturetranscriptor/transcription.dart';
+import 'SplashScreen.dart';
+import 'transcription.dart';
 import 'package:camera/camera.dart';
 import 'TranscriptionVew.dart';
 late List<CameraDescription> _cameras;
@@ -18,15 +18,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        appBar: AppBar(
-          title: Text("Historique De Transcription",style: TextStyle(
-              color: Color(0xE8AA79F3),
-              fontWeight: FontWeight.bold,
-              fontFamily: "PirataOne-Regular"),
-          ),
-          backgroundColor: Colors.white,
-        ),
-        body: HomePage(),
+        body:SplashScreen(),
       ),
     );
   }
@@ -42,16 +34,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final ImagePicker _picker = ImagePicker();
-  final textDetector =TextRecognizer();
   Future<void> _getImageFromGallery() async {
     try {
       XFile? imageFile = await _picker.pickImage(source: ImageSource.gallery);
       if (imageFile != null) {
-        final inputImage = InputImage.fromFilePath(imageFile.path);
-        /*TextRecognizer textRecognizer = TextRecognizer();
-        RecognizedText recognizedText = await textRecognizer.processImage(inputImage);*/
-        //TranscriptionList.transcriptions.add(new Transcription(imageFile.path, recognizedText.text));
-        // Vous pouvez naviguer vers la vue de transcription ici
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => TranscritionView(picture: imageFile)),
@@ -67,14 +53,22 @@ class _HomePageState extends State<HomePage> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        appBar: AppBar(
+        title: Text("Historique De Transcription",style: TextStyle(
+            color: Color(0xE8AA79F3),
+            fontWeight: FontWeight.bold,
+            fontFamily: "PirataOne-Regular"),
+        ),
+        backgroundColor: Colors.white,
+      ),
         body: Container(
           child: TranscriptionList(),
-        ), // Remplacez par votre widget
+        ),
         floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             FloatingActionButton(
-              heroTag: "cameraButton", // Ajout d'un tag unique
+              heroTag: "Camera", // Ajout d'un tag unique
               onPressed: () {
                 Navigator.push(
                   context,
@@ -84,7 +78,7 @@ class _HomePageState extends State<HomePage> {
               tooltip: 'Prendre une photo',
               child: Icon(Icons.camera),
             ),
-            SizedBox(width: 10), // Espacement entre les boutons
+            SizedBox(width: 10),
             FloatingActionButton(
               heroTag: "photoLibraryButton", // Ajout d'un tag unique
               onPressed: _getImageFromGallery,
@@ -106,7 +100,6 @@ class CameraScreen extends StatefulWidget {
 }
 
 class _CameraScreenState extends State<CameraScreen> {
-  final TextRecognizer textRecognitionProcessor = GoogleMlKit.vision.textRecognizer();
   late CameraController controller;
 
   @override
@@ -144,10 +137,8 @@ class _CameraScreenState extends State<CameraScreen> {
       Navigator.push(context, MaterialPageRoute(builder: (context)=>TranscritionView(picture: image)));
     } on CameraException catch (e) {
       print('Une erreur est survenue lors de la prise de photo : ${e.description}');
-      // Vous pouvez ajouter ici un code pour gérer l'erreur de manière plus appropriée, par exemple en affichant un message à l'utilisateur.
     } catch (e) {
       print('Une erreur inattendue est survenue : $e');
-      // Gérer les autres erreurs non spécifiques à la caméra.
     }
   }
 
@@ -164,12 +155,23 @@ class _CameraScreenState extends State<CameraScreen> {
           CameraPreview(controller),
           Positioned(
             bottom: 10,
-            right: 10,
+            right: 70,
             child: FloatingActionButton(
               child: Icon(Icons.camera),
               onPressed: takePicture,
             ),
           ),
+          Positioned(
+            bottom: 10,
+            right:10,
+            child: FloatingActionButton(
+              child: Icon(Icons.hide_image),
+              onPressed: (){
+                Navigator.push(context, MaterialPageRoute(builder:
+                (context)=>HomePage()));
+  },
+            ),
+          )
         ],
       ),
     );

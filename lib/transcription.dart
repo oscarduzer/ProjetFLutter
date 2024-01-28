@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 class Transcription {
@@ -44,8 +46,8 @@ class _TranscriptionListState extends State<TranscriptionList> {
       itemCount: transcriptions.length,
       itemBuilder: (context, index) {
           return ListTile(
-            leading: Image.network(
-              transcriptions[index].image,
+            leading: Image.file(
+              transcriptions[index].image as File,
               width: 50,
               height: 50,
               fit: BoxFit.cover,
@@ -70,8 +72,8 @@ class _TranscriptionListState extends State<TranscriptionList> {
                                 content: SingleChildScrollView(
                                   child: ListBody(
                                     children: <Widget>[
-                                      Image.network(
-                                        transcriptions[index].image,
+                                      Image.file(
+                                        transcriptions[index].image as File,
                                         width: 300,
                                         height: 300,
                                         fit: BoxFit.cover,

@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:google_ml_kit/google_ml_kit.dart';
 import 'transcription.dart';
 import 'main.dart';
 import 'dart:io';
@@ -20,13 +23,12 @@ class _TranscritionViewState extends State<TranscritionView> {
   }
   void load() async{
     File imageFile = File(widget.picture.path);
-    TranscriptionList.transcriptions.add(new Transcription(imageFile.path, 'recognizedText.text'));
-    /*TextRecognizer textRecognizer = TextRecognizer();
+    TextRecognizer textRecognizer = TextRecognizer();
     InputImage inputImage = InputImage.fromFilePath(widget.picture.path);
     RecognizedText recognizedText = await textRecognizer.processImage(inputImage);
-    Transcription transcription=new Transcription(widget.picture.path, recognizedText.text);
+    Transcription transcription=new Transcription(imageFile.path, recognizedText.text);
     TranscriptionList.transcriptions.add(transcription);
-    print(TranscriptionList.transcriptions);*/
+    print(TranscriptionList.transcriptions);
   }
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,7 @@ class _TranscritionViewState extends State<TranscritionView> {
         child: Column(
           children: [
             Container(
-                child: Image.network(widget.picture.path)
+                child: Image.file(File(widget.picture.path))
             ),
             Container(
               child: Text(_text),
@@ -45,7 +47,7 @@ class _TranscritionViewState extends State<TranscritionView> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (builder)=>MyApp()));
+          Navigator.push(context, MaterialPageRoute(builder: (builder)=>HomePage()));
         },
         child: Icon(Icons.home),
       ),
