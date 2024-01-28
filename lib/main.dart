@@ -19,7 +19,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: Text("Historique De Transcription",style: TextStyle(color: Color(0xE8AA79F3)),),
+          title: Text("Historique De Transcription",style: TextStyle(
+              color: Color(0xE8AA79F3),
+              fontWeight: FontWeight.bold,
+              fontFamily: "PirataOne-Regular"),
+          ),
           backgroundColor: Colors.white,
         ),
         body: HomePage(),
