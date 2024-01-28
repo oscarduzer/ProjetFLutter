@@ -79,7 +79,7 @@ flutter:
   fonts:
      - family: PirataOne-Regular
        fonts:
-         - asset: PirataOne-Regular.ttf
+         - asset: fonts/PirataOne-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
