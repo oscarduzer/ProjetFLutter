@@ -3,7 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'SplashScreen.dart';
 import 'transcription.dart';
 import 'package:camera/camera.dart';
-import 'TranscriptionVew.dart';
+import 'TranscriptionView.dart';
 late List<CameraDescription> _cameras;
 
 void main() async{
